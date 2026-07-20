@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⏰ Digital Clock Preview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .container {
+            max-width: 1300px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 40px;
+            animation: slideDown 0.8s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 20px rgba(0, 255, 200, 0.5);
+            letter-spacing: 2px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.8;
+            color: #00ffcc;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            font-family: 'Courier New', monospace;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-pause {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .btn-pause:hover {
+            box-shadow: 0 6px 25px rgba(245, 87, 108, 0.6);
+        }
+
+        .clocks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .clock-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(0, 255, 200, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s ease;
+            animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes popIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.5) rotateX(20deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotateX(0);
+            }
+        }
+
+        .clock-card:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(0, 255, 200, 0.5);
+            transform: translateY(-8px);
+            box-shadow: 0 15px 50px rgba(0, 255, 200, 0.3);
+        }
+
+        .clock-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .flag {
+            font-size: 2.5em;
+        }
+
+        .timezone-name {
+            color: #00ffcc;
+            font-size: 1.1em;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .time-display {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 25px 15px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            border-left: 5px solid #00ffcc;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .digital-time {
+            font-size: 2.8em;
+            color: #00ff88;
+            font-weight: bold;
+            letter-spacing: 3px;
+            text-shadow: 0 0 15px rgba(0, 255, 136, 0.7);
+            font-family: 'Courier New', monospace;
+            line-height: 1.3;
+        }
+
+        .date-info {
+            color: #00d4ff;
+            font-size: 0.9em;
+            margin-top: 12px;
+            opacity: 0.85;
+            letter-spacing: 0.5px;
+        }
+
+        .info-box {
+            background: rgba(0, 255, 200, 0.1);
+            border-left: 4px solid #00ffcc;
+            padding: 18px 25px;
+            border-radius: 10px;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1em;
+            box-shadow: 0 4px 15px rgba(0, 255, 200, 0.1);
+        }
+
+        .info-box strong {
+            color: #00ffcc;
+        }
+
+        .loading {
+            text-align: center;
+            color: #00ffcc;
+            font-size: 1.3em;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 255, 200, 0.2);
+            border-top: 4px solid #00ff88;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 30px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .last-updated {
+            text-align: center;
+            color: rgba(0, 255, 200, 0.7);
+            font-size: 0.95em;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 255, 200, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .digital-time {
+                font-size: 2em;
+            }
+
+            .clocks-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        .status {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #00ff88;
+            margin-right: 8px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.2);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⏰ Global Digital Clock</h1>
+            <p>Real-time across 10 world timezones</p>
+        </div>
+
+        <div class="info-box">
+            <span class="status"></span>
+            <strong>Live Updates</strong> - Times refresh every second
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="updateClocks()">🔄 Refresh Now</button>
+            <button class="btn btn-pause" onclick="toggleAutoUpdate()"><span id="toggleBtn">⏸️ Pause</span></button>
+        </div>
+
+        <div id="clocksContainer" class="clocks-grid">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Loading world clocks...</p>
+            </div>
+        </div>
+
+        <div class="last-updated" id="lastUpdated"></div>
+    </div>
+
+    <script>
+        let autoUpdateEnabled = true;
+        let updateInterval;
+        
+        // Static mock data for preview
+        const mockTimezones = [
+            { name: 'IST (India)', flag: '🇮🇳', time: 'Sun, 02:30:45 PM' },
+            { name: 'EST (New York)', flag: '🇺🇸', time: 'Sun, 05:00:45 AM' },
+            { name: 'GMT (London)', flag: '🇬🇧', time: 'Sun, 10:00:45 AM' },
+            { name: 'CET (Berlin)', flag: '🇩🇪', time: 'Sun, 11:00:45 AM' },
+            { name: 'JST (Tokyo)', flag: '🇯🇵', time: 'Sun, 07:00:45 PM' },
+            { name: 'AEST (Sydney)', flag: '🇦🇺', time: 'Mon, 08:30:45 AM' },
+            { name: 'PST (Los Angeles)', flag: '🇺🇸', time: 'Sun, 02:00:45 AM' },
+            { name: 'SGT (Singapore)', flag: '🇸🇬', time: 'Sun, 04:30:45 PM' },
+            { name: 'GST (Dubai)', flag: '🇦🇪', time: 'Sun, 02:00:45 PM' },
+            { name: 'NZDT (Auckland)', flag: '🇳🇿', time: 'Mon, 10:30:45 AM' }
+        ];
+
+        function updateClocks() {
+            try {
+                const container = document.getElementById('clocksContainer');
+                container.innerHTML = '';
+
+                mockTimezones.forEach((clock, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'clock-card';
+                    card.style.animationDelay = `${index * 0.08}s`;
+                    
+                    const parts = clock.time.split(', ');
+                    card.innerHTML = `
+                        <div class="clock-header">
+                            <span class="flag">${clock.flag}</span>
+                            <div class="timezone-name">${clock.name}</div>
+                        </div>
+                        <div class="time-display">
+                            <div class="digital-time">${parts[1]}</div>
+                            <div class="date-info">${parts[0]}</div>
+                        </div>
+                    `;
+                    
+                    container.appendChild(card);
+                });
+
+                updateLastUpdatedTime();
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function updateLastUpdatedTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            });
+            document.getElementById('lastUpdated').textContent = `🕐 Last synced: ${timeStr} (Your Local Time) - PREVIEW MODE`;
+        }
+
+        function toggleAutoUpdate() {
+            autoUpdateEnabled = !autoUpdateEnabled;
+            const btn = document.getElementById('toggleBtn');
+            
+            if (autoUpdateEnabled) {
+                btn.textContent = '⏸️ Pause';
+                startAutoUpdate();
+            } else {
+                btn.textContent = '▶️ Resume';
+                clearInterval(updateInterval);
+            }
+        }
+
+        function startAutoUpdate() {
+            updateClocks();
+            updateInterval = setInterval(updateClocks, 1000);
+        }
+
+        window.addEventListener('load', () => {
+            startAutoUpdate();
+        });
+
+        window.addEventListener('beforeunload', () => {
+            clearInterval(updateInterval);
+        });
+    </script>
+</body>
+</html>
